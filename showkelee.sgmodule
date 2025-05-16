@@ -5,6 +5,6 @@
 [Header Rewrite]
 http-request ^https?:\/\/kelee\.one(\/.*)? header-replace 'User-Agent' 'Loon/859 CFNetwork/1410.1 Darwin/22.6.0'
 http-request ^https?:\/\/[a-zA-Z0-9-]+\.kelee\.one\/.* header-replace 'User-Agent' 'Loon/859 CFNetwork/1410.1 Darwin/22.6.0'
-http-request ^https?:\/\/kelee\.one(\/.*)? header-replace 'Content-Type' 'text/plain; charset=utf-8'
+http-response ^https?:\/\/kelee\.one(\/.*)? header-replace 'Content-Type' 'text/plain; charset=utf-8'
 [MITM]
 hostname = %APPEND% rule.kelee.one, kelee.one

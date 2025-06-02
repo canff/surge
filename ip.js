@@ -2,7 +2,7 @@
   try {
     // 获取入口信息（不使用代理）
     const entryRes = await fetch("http://ip-api.com/json/?lang=zh-CN&fields=query,isp,regionName,city,country", {
-      policy: "Select"
+      policy: "Direct"
     });
     const entry = await entryRes.json();
 

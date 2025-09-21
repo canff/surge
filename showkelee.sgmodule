@@ -3,8 +3,8 @@
 #!author=KANNA
 #!date=2025-05-16
 [Header Rewrite]
-http-request ^https?:\/\/kelee\.one(\/.*)? header-replace 'User-Agent' 'Loon/882 CFNetwork/1410.1 Darwin/22.6.0'
-http-request ^https?:\/\/[a-zA-Z0-9-]+\.kelee\.one\/.* header-replace 'User-Agent' 'Loon/882 CFNetwork/1410.1 Darwin/22.6.0'
-http-response ^https?:\/\/kelee\.one(\/.*)? header-replace 'Content-Type' 'text/plain; charset=utf-8'
+http-request ^https:\/\/(.*\.)?kelee\.one(\/.*)? header-replace User-Agent "Surge iOS/9527"
+http-response ^https:\/\/(.*\.)?kelee\.one(\/.*)? header-add content-disposition inline
+http-response ^https:\/\/(.*\.)?kelee\.one(\/.*)? header-replace content-type "text/plain; charset=utf-8"
 [MITM]
-hostname = %APPEND% rule.kelee.one, kelee.one
+hostname = %APPEND% -pluginhub.kelee.one, *.kelee.one, kelee.one

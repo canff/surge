@@ -7,4 +7,4 @@ http-request ^https:\/\/(.*\.)?kelee\.one(\/.*)? header-replace User-Agent "Surg
 http-response ^https:\/\/(.*\.)?kelee\.one(\/.*)? header-add content-disposition inline
 http-response ^https:\/\/(.*\.)?kelee\.one(\/.*)? header-replace content-type "text/plain; charset=utf-8"
 [MITM]
-hostname = %APPEND% -pluginhub.kelee.one, *.kelee.one, kelee.one
+hostname = %APPEND% - pluginhub.kelee.one, *.kelee.one, kelee.one

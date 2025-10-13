@@ -1,0 +1,10 @@
+#!name=Remove Google App Popup
+#!desc=隐藏 Google 搜索页提示“尝试在 Google 应用中打开”的弹窗
+#!author=ChatGPT
+#!version=1.0
+
+[Script]
+remove_google_popup = type=http-response,pattern=^https:\/\/www\.google\.com\/search.*?,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Scripts/General/HTML-Element-Remover.js,argument=<style>[aria-modal="true"],div[role="dialog"]{display:none!important}</style>
+
+[MITM]
+hostname = www.google.com

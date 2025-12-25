@@ -5,4 +5,4 @@
 今日黄历&节假日倒数 = script-name=今日黄历&节假日倒数, update-interval=1800
 
 [Script]
-今日黄历&节假日倒数 = type=generic, timeout=10, script-path=https://raw.githubusercontent.com/jnlaoshu/MySelf/main/Script/TodayAlmanac.js
+今日黄历&节假日倒数 = type=generic, timeout=10, script-path=https://raw.githubusercontent.com/canff/surge/refs/heads/main/js/TodayAlmanac.js

@@ -1,0 +1,8 @@
+#!name=网络信息
+#!desc=显示网络信息面板
+
+[Panel]
+网络信息 = title="", content="", style=info, script-name=网络信息, update-interval=1
+
+[Script]
+网络信息 = type=generic, timeout=10, script-path=https://raw.githubusercontent.com/canff/surge/refs/heads/main/js/NetworkInfo.js

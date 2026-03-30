@@ -1,8 +1,0 @@
-#!name=今日黄历&节假日倒数
-#!desc=今日黄历与节假日倒数面板
-
-[Panel]
-今日黄历&节假日倒数 = script-name=今日黄历&节假日倒数, update-interval=1800
-
-[Script]
-今日黄历&节假日倒数 = type=generic, timeout=10, script-path=https://raw.githubusercontent.com/canff/surge/refs/heads/main/js/TodayAlmanac.js

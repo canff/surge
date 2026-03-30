@@ -19,7 +19,7 @@ scriptings:
   - http_request:
       name: "Telegram 链接重定向"
       match: "^https?://t\\.me/.+"
-      script_url: TgRedirect.js
+      script_url: https://raw.githubusercontent.com/canff/surge/refs/heads/main/js/TgRedirect.js
       timeout: 10
 
 mitm:

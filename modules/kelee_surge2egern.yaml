@@ -5,6 +5,7 @@ description: |2
   可莉插件网址：https://hub.kelee.one
   色鸡模块网址：https://surge.qingr.moe
 homepage: https://hub.kelee.one
+homepage2:https://surge.qingr.moe
 dns: {}
 body_rewrites:
 - response_regex:

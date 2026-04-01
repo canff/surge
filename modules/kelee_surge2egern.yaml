@@ -1,14 +1,12 @@
 name: 插件中心 & KelvinLab 跳转整合
 description: |
-  整合了以下站点的 Egern 快捷跳转功能：
-  1. 可莉插件中心 (hub.kelee.one)
-  2. 色鸡模块中心 (surge.qingr.moe)
-  3. KelvinLab 插件库 (kelvinlab.wuyra.com)
-  功能：点击安装时直接唤起 Egern，无需脚本转换。
-homepage: 
+  整合跳转功能。支持站点：
   - https://hub.kelee.one
   - https://surge.qingr.moe
   - https://kelvinlab.wuyra.com
+  
+  功能：点击安装时直接唤起 Egern，无需脚本转换。
+homepage: https://hub.kelee.one
 
 body_rewrites:
   # 可莉插件中心跳转
@@ -37,8 +35,7 @@ body_rewrites:
 
 mitm:
   hostnames:
-    includes:
-      - pluginhub.kelee.one
-      - hub.kelee.one
-      - surge.qingr.moe
-      - kelvinlab.wuyra.com
+    - pluginhub.kelee.one
+    - hub.kelee.one
+    - surge.qingr.moe
+    - kelvinlab.wuyra.com

@@ -1,23 +1,44 @@
-name: 插件模块跳转
-description: |2
+name: 插件中心 & KelvinLab 跳转整合
+description: |
+  整合了以下站点的 Egern 快捷跳转功能：
+  1. 可莉插件中心 (hub.kelee.one)
+  2. 色鸡模块中心 (surge.qingr.moe)
+  3. KelvinLab 插件库 (kelvinlab.wuyra.com)
+  功能：点击安装时直接唤起 Egern，无需脚本转换。
+homepage: 
+  - https://hub.kelee.one
+  - https://surge.qingr.moe
+  - https://kelvinlab.wuyra.com
 
-  色鸡 可莉插件中心跳 Egern 只跳转不经过Script转换
-  可莉插件网址：https://hub.kelee.one
-  色鸡模块网址：https://surge.qingr.moe
-homepage: https://hub.kelee.one,https://surge.qingr.moe
-dns: {}
 body_rewrites:
-- response_regex:
-    match: https://(pluginhub|hub)\.kelee\.one/
-    find: loon://import\?plugin=
-    replace: egern:///modules/new?url=
-- response_regex:
-    match: https://surge\.qingr\.moe/
-    find: surge:///install-module\?url=
-    replace: egern:///modules/new?url=
+  # 可莉插件中心跳转
+  - response_regex:
+      match: https://(pluginhub|hub)\.kelee\.one/
+      find: loon://import\?plugin=
+      replace: egern:///modules/new?url=
+      
+  # 色鸡模块跳转
+  - response_regex:
+      match: https://surge\.qingr\.moe/
+      find: surge:///install-module\?url=
+      replace: egern:///modules/new?url=
+
+  # KelvinLab 列表跳转 (插件/模块)
+  - response_regex:
+      match: ^https?:\/\/kelvinlab\.wuyra\.com\/list.json
+      find: loon:\/\/import\?plugin=|surge:\/\/\/install-module\?url=
+      replace: egern:///modules/new?url=
+      
+  # KelvinLab 列表跳转 (分流/规则集)
+  - response_regex:
+      match: ^https?:\/\/kelvinlab\.wuyra\.com\/list.json
+      find: https:\/\/www\.nsloon\.com\/openloon\/import\?rules=
+      replace: egern:///rules/new?type=rule_set&policy=DIRECT&match=
+
 mitm:
   hostnames:
     includes:
-    - pluginhub.kelee.one
-    - hub.kelee.one
-    - surge.qingr.moe
+      - pluginhub.kelee.one
+      - hub.kelee.one
+      - surge.qingr.moe
+      - kelvinlab.wuyra.com

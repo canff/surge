@@ -4,8 +4,7 @@ description: |2
   色鸡 可莉插件中心跳 Egern 只跳转不经过Script转换
   可莉插件网址：https://hub.kelee.one
   色鸡模块网址：https://surge.qingr.moe
-homepage: https://hub.kelee.one
-homepage2:https://surge.qingr.moe
+homepage: https://hub.kelee.one,https://surge.qingr.moe
 dns: {}
 body_rewrites:
 - response_regex:

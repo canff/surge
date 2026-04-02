@@ -18,8 +18,8 @@ body_rewrites:
   # 色鸡模块跳转
   - response_regex:
       match: https://surge\.qingr\.moe/
-      find: surge:///install-module\?url=
-      replace: egern:///modules/new?url=
+      find: href="surge:///install-module\?url=
+      replace: href="egern:///modules/new?url=
 
   # KelvinLab 列表跳转 (插件/模块)
   - response_regex:

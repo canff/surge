@@ -1,0 +1,17 @@
+#!name=Spotify 歌词-百度翻译版
+#!desc=将 Spotify 歌词通过百度翻译 API 转换为中文。需在参数中自行填写百度翻译开放平台的 API 凭据。
+#!author=canff (Script) & Gemini (Plugin)
+#!icon=https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Spotify.png
+
+[Argument]
+# 百度翻译 APP ID
+Baidu_ID = input, "", name="百度 APP ID", desc="请填入百度翻译开放平台申请的 APP ID"
+# 百度翻译 API Key
+Baidu_Key = input, "", name="百度 API 密钥", desc="请填入百度翻译开放平台申请的密钥 (Security Key)"
+
+[Script]
+# 拦截 Spotify 歌词请求并传入百度翻译参数
+http-response ^https?:\/\/spclient\.wg\.spotify\.com\/(color-lyrics|lyrics)\/ script-path=https://raw.githubusercontent.com/canff/loon/main/scripts/Spotify_lyric.js, requires-body=true, timeout=10, tag=Spotify_Baidu_Lyric, argument="api_type=baidu&appid={Baidu_ID}&key={Baidu_Key}"
+
+[MITM]
+hostname = spclient.wg.spotify.com

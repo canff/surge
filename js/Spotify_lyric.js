@@ -1,27 +1,42 @@
-/*
- * 修改后的脚本开头，支持从 Loon 插件 UI 读取参数
- */
-
 var $XiaoMao = new Env("Spotify");
-var spotifyAppID = "";
-var spotifySecurityKey = "";
 
-// --- 核心修改：解析 Loon 插件传入的参数 ---
+// 1. 定义变量
+let spotifyAppID = "";
+let spotifySecurityKey = "";
+
+// 2. 核心逻辑：解析 Loon 插件传入的参数
 if (typeof $argument !== "undefined" && $argument) {
-    const params = Object.fromEntries($argument.split("&").map(item => item.split("=")));
-    // 这里对应的键名必须和插件配置中的 argument="id=...&key=..." 一致
+    const params = Object.fromEntries($argument.split("&").map(item => {
+        let pair = item.split("=");
+        return [pair[0], pair[1]];
+    }));
     spotifyAppID = params.id || "";
     spotifySecurityKey = params.key || "";
 }
 
-// 兜底方案：如果 UI 没填，尝试从持久化存储读取
-if (!spotifyAppID) spotifyAppID = $XiaoMao.read("BaiduAppID");
-if (!spotifySecurityKey) spotifySecurityKey = $XiaoMao.read("BaiduSecurityKey");
+// 3. 兜底读取：如果插件里没填，才去读存储（BoxJs）
+if (!spotifyAppID) spotifyAppID = $XiaoMao.read("BaiduAppID") || "";
+if (!spotifySecurityKey) spotifySecurityKey = $XiaoMao.read("BaiduSecurityKey") || "";
 
+// 4. 重要：将获取到的值写入 options 供后续逻辑使用
 var options = {
   appid: spotifyAppID,
   securityKey: spotifySecurityKey,
 };
+
+/**
+ * 5. 修复弹窗逻辑
+ * 原脚本中类似 `if (!options.appid) { $notification.post(...) }` 的逻辑
+ * 只有在上面两步都拿不到值的情况下才应该执行。
+ */
+if (options.appid && options.securityKey) {
+    // 如果已经拿到值了，我们可以人为地“欺骗”一下脚本，把它写进存储，防止它再次弹窗
+    $XiaoMao.write(options.appid, "BaiduAppID");
+    $XiaoMao.write(options.securityKey, "BaiduSecurityKey");
+} else {
+    // 只有真没填的时候才弹窗（如果你嫌烦，可以直接把下面这行删掉）
+    $notification.post("XiaoMao-Spotify", "配置缺失", "AppID 为空，请在插件设置中填写");
+}
 
 function Env(name) {
   // 判断当前环境是否为 Loon

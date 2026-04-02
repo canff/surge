@@ -1,10 +1,26 @@
+/*
+ * 修改后的脚本开头，支持从 Loon 插件 UI 读取参数
+ */
+
 var $XiaoMao = new Env("Spotify");
-var appName = "";
 var spotifyAppID = "";
 var spotifySecurityKey = "";
+
+// --- 核心修改：解析 Loon 插件传入的参数 ---
+if (typeof $argument !== "undefined" && $argument) {
+    const params = Object.fromEntries($argument.split("&").map(item => item.split("=")));
+    // 这里对应的键名必须和插件配置中的 argument="id=...&key=..." 一致
+    spotifyAppID = params.id || "";
+    spotifySecurityKey = params.key || "";
+}
+
+// 兜底方案：如果 UI 没填，尝试从持久化存储读取
+if (!spotifyAppID) spotifyAppID = $XiaoMao.read("BaiduAppID");
+if (!spotifySecurityKey) spotifySecurityKey = $XiaoMao.read("BaiduSecurityKey");
+
 var options = {
-  appid: "",
-  securityKey: "",
+  appid: spotifyAppID,
+  securityKey: spotifySecurityKey,
 };
 
 function Env(name) {

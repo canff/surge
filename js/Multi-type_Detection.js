@@ -3,23 +3,31 @@
  * Sources: IPPure / ipapi.is / IP2Location / Scamalytics / DB-IP / ipregistry / ipinfo
  * Unlock: ChatGPT / Gemini / Netflix / TikTok / YouTube Premium
  * Env: POLICY, MARK_IP
+ * 🌈 全彩终端风格优化 | 适配所有组件尺寸 | 深色主题统一适配
  */
 export default async function (ctx) {
-    // === 仿天气组件深色渐变配色方案 ===
-    var BG_COLOR = { light: '#1A202C', dark: '#121212' }; // 深灰到近乎黑的渐变底色
-    var C_TITLE = { light: '#FFFFFF', dark: '#FFFFFF' };  // 纯白标题，清晰醒目
-    var C_SUB = { light: '#A0AEC0', dark: '#9CA3AF' };    // 浅灰副标题，弱化次要信息
-    var C_MAIN = { light: '#F7FAFC', dark: '#F3F4F6' };   // 亮白正文，保证可读性
+    // === 全彩终端配色方案 - 完全匹配服务器监控面板风格 ===
+    // 背景色：终端深黑底，深浅模式统一
+    const BG_COLORS = [{ light: '#14141B', dark: '#14141B' }, { light: '#14141B', dark: '#14141B' }];
+    const BG_SOLID = { light: '#14141B', dark: '#14141B' };
+    const BG_DIVIDER = { light: 'rgba(255,255,255,0.1)', dark: 'rgba(255,255,255,0.1)' };
+    
+    // 基础文字色
+    const C_WHITE = { light: '#FFFFFF', dark: '#FFFFFF' };    // 纯白标题/主数值
+    const C_GRAY = { light: '#8E8E98', dark: '#8E8E98' };     // 浅灰辅助文本
+    const C_MAIN = { light: '#F8F8F2', dark: '#F8F8F2' };     // 亮白正文
 
-    // 状态与图标颜色（适配天气组件暖橙/绿/红体系）
-    var C_GREEN = { light: '#4ADE80', dark: '#4ADE80' };   // 清新绿（低危）
-    var C_YELLOW = { light: '#FBBF24', dark: '#FBBF24' };  // 暖橙黄（中危）
-    var C_ORANGE = { light: '#F97316', dark: '#F97316' };  // 深橙（高危）
-    var C_RED = { light: '#EF4444', dark: '#EF4444' };     // 鲜红（极高危）
-    var C_ICON_IP = { light: '#FBBF24', dark: '#FBBF24' }; // 暖橙 IP 图标
-    var C_ICON_LO = { light: '#A78BFA', dark: '#A78BFA' }; // 淡紫 位置图标
-    var C_ICON_SC = { light: '#60A5FA', dark: '#60A5FA' }; // 浅蓝 评分图标
-    var C_BLUE = { light: '#3B82F6', dark: '#3B82F6' };    // 主蓝 解锁图标
+    // 全彩模块专属色 - 终端经典配色，和参考面板完全对齐
+    const COLOR = {
+        green: { light: '#50FA7B', dark: '#50FA7B' },    // 成功/IP/低危 亮绿
+        yellow: { light: '#F1FA8C', dark: '#F1FA8C' },   // 数值/中危 亮黄
+        pink: { light: '#FF79C6', dark: '#FF79C6' },     // 解锁/网络 粉紫
+        purple: { light: '#BD93F9', dark: '#BD93F9' },   // 位置/ASN 浅紫
+        cyan: { light: '#8BE9FD', dark: '#8BE9FD' },     // 类型/信息 青蓝
+        orange: { light: '#FFB86C', dark: '#FFB86C' },   // 中高危 暖橙
+        red: { light: '#FF5555', dark: '#FF5555' },       // 高危/失败 亮红
+        blue: { light: '#6272A4', dark: '#6272A4' }       // 辅助蓝
+    };
 
     var policy = ctx.env.POLICY || "";
     var markIP = (ctx.env.MARK_IP || "").toLowerCase() === "true";
@@ -143,11 +151,12 @@ export default async function (ctx) {
         return { sev: sev, t: 'ipregistry: ' + tags.join('/') };
     }
 
+    // 风险等级对应颜色
     function sevColor(sev) {
-        if (sev >= 4) return C_RED;
-        if (sev >= 3) return C_ORANGE;
-        if (sev >= 1) return C_YELLOW;
-        return C_GREEN;
+        if (sev >= 4) return COLOR.red;
+        if (sev >= 3) return COLOR.orange;
+        if (sev >= 1) return COLOR.yellow;
+        return COLOR.green;
     }
     function sevIcon(sev) {
         if (sev >= 3) return 'xmark.shield.fill';
@@ -347,62 +356,88 @@ export default async function (ctx) {
         } catch (e) { return "\u274C"; }
     }
 
-    // ===================== UI 组件 =====================
+    // ===================== 全彩UI组件重构 =====================
 
     function errWidget(msg) {
         return {
-            type: 'widget', padding: 12, gap: 6, backgroundColor: BG_COLOR,
+            type: 'widget', padding: 12, gap: 6, backgroundColor: BG_SOLID,
             children: [
                 {
                     type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-                        { type: 'image', src: 'sf-symbol:exclamationmark.triangle.fill', color: C_RED, width: 14, height: 14 },
-                        { type: 'text', text: 'IP 纯净度', font: { size: 14, weight: 'heavy' }, textColor: C_TITLE },
+                        { type: 'image', src: 'sf-symbol:exclamationmark.triangle.fill', color: COLOR.red, width: 14, height: 14 },
+                        { type: 'text', text: 'IP 纯净度', font: { size: 14, weight: 'heavy' }, textColor: C_WHITE },
                     ]
                 },
-                { type: 'text', text: msg, font: { size: 11 }, textColor: C_RED },
+                { type: 'text', text: msg, font: { size: 11 }, textColor: COLOR.red },
             ]
         };
     }
 
-    function Row(iconName, iconColor, label, value, valueColor) {
+    // 重构Row组件：支持标签和数值分别自定义颜色，全彩适配
+    function Row(iconName, iconColor, label, labelColor, value, valueColor) {
         return {
             type: 'stack', direction: 'row', alignItems: 'center', gap: 6,
             children: [
                 { type: 'image', src: 'sf-symbol:' + iconName, color: iconColor, width: 13, height: 13 },
-                { type: 'text', text: label, font: { size: 11 }, textColor: C_SUB },
+                { type: 'text', text: label, font: { size: 11 }, textColor: labelColor },
                 { type: 'spacer' },
                 { type: 'text', text: value, font: { size: 11, weight: 'bold', family: 'Menlo' }, textColor: valueColor, maxLines: 1, minScale: 0.5 },
             ]
         };
     }
 
+    // 全彩评分行组件
     function ScoreRow(grade, fz) {
         var sz = fz || 10;
         var col = sevColor(grade.sev);
         var parts = grade.t.split(': ');
         var src = parts[0] || grade.t;
         var val = parts[1] || '';
+        // 评分源标签专属彩色
+        const labelColorMap = {
+            'IPPure': COLOR.green,
+            'ipapi': COLOR.cyan,
+            'IP2Location': COLOR.purple,
+            'Scamalytics': COLOR.orange,
+            'DB-IP': COLOR.yellow,
+            'ipregistry': COLOR.pink
+        };
+        var labelColor = labelColorMap[src] || C_GRAY;
+
         return {
             type: 'stack', direction: 'row', alignItems: 'center', gap: 4,
             children: [
                 { type: 'image', src: 'sf-symbol:' + sevIcon(grade.sev), color: col, width: sz, height: sz },
-                { type: 'text', text: src, font: { size: sz }, textColor: C_SUB },
+                { type: 'text', text: src, font: { size: sz }, textColor: labelColor },
                 { type: 'spacer' },
                 { type: 'text', text: val, font: { size: sz, weight: 'bold', family: 'Menlo' }, textColor: col, maxLines: 1, minScale: 0.5 },
             ]
         };
     }
 
+    // 全彩解锁行组件
     function UnlockRow(name, result, fz) {
         var sz = fz || 10;
         var isOk = result !== "\u274C" && result !== "\uD83C\uDF7F" && result !== "\u23F3" && result !== "CN";
-        var color = isOk ? C_GREEN : (result === "\uD83C\uDF7F" || result === "\u23F3" || result === "APP") ? C_YELLOW : C_RED;
+        var color = isOk ? COLOR.green : (result === "\uD83C\uDF7F" || result === "\u23F3" || result === "APP") ? COLOR.yellow : COLOR.red;
         var icon = isOk ? 'checkmark.circle.fill' : (result === "\uD83C\uDF7F" || result === "\u23F3" || result === "APP") ? 'exclamationmark.circle.fill' : 'xmark.circle.fill';
+        // 解锁标签专属彩色
+        const labelColorMap = {
+            'GPT': COLOR.pink,
+            'Gemini': COLOR.cyan,
+            'YouTube': COLOR.red,
+            'ChatGPT': COLOR.pink,
+            'Netflix': COLOR.red,
+            'TikTok': COLOR.black,
+            '奈飞': COLOR.red
+        };
+        var labelColor = labelColorMap[name] || COLOR.purple;
+
         return {
             type: 'stack', direction: 'row', alignItems: 'center', gap: 4,
             children: [
                 { type: 'image', src: 'sf-symbol:' + icon, color: color, width: sz, height: sz },
-                { type: 'text', text: name, font: { size: sz }, textColor: C_SUB },
+                { type: 'text', text: name, font: { size: sz }, textColor: labelColor },
                 { type: 'spacer' },
                 { type: 'text', text: result, font: { size: sz, weight: 'bold' }, textColor: color, maxLines: 1 },
             ]
@@ -473,19 +508,19 @@ export default async function (ctx) {
 
         var family = ctx.widgetFamily || 'systemMedium';
 
-        // Lock screen
+        // Lock screen 锁屏组件全彩适配
         if (family === 'accessoryRectangular') {
             return {
                 type: 'widget', padding: [4, 8], gap: 2,
                 children: [
                     {
                         type: 'stack', direction: 'row', alignItems: 'center', gap: 4, children: [
-                            { type: 'image', src: 'sf-symbol:' + sevIcon(maxSev), width: 12, height: 12 },
-                            { type: 'text', text: 'IP风险: ' + sevText(maxSev), font: { size: 'caption1', weight: 'bold' } },
+                            { type: 'image', src: 'sf-symbol:' + sevIcon(maxSev), color: sevColor(maxSev), width: 12, height: 12 },
+                            { type: 'text', text: 'IP风险: ' + sevText(maxSev), font: { size: 'caption1', weight: 'bold' }, color: sevColor(maxSev) },
                         ]
                     },
-                    { type: 'text', text: showIP, font: { size: 'caption2', family: 'Menlo' } },
-                    { type: 'text', text: loc, font: { size: 'caption2' }, maxLines: 1 },
+                    { type: 'text', text: showIP, font: { size: 'caption2', family: 'Menlo' }, color: COLOR.green },
+                    { type: 'text', text: loc, font: { size: 'caption2' }, color: C_MAIN, maxLines: 1 },
                 ]
             };
         }
@@ -493,50 +528,50 @@ export default async function (ctx) {
             return {
                 type: 'widget', padding: 4, gap: 2,
                 children: [
-                    { type: 'image', src: 'sf-symbol:' + sevIcon(maxSev), width: 20, height: 20 },
-                    { type: 'text', text: sevText(maxSev), font: { size: 'caption2', weight: 'bold' }, maxLines: 1, minScale: 0.5 },
+                    { type: 'image', src: 'sf-symbol:' + sevIcon(maxSev), color: sevColor(maxSev), width: 20, height: 20 },
+                    { type: 'text', text: sevText(maxSev), font: { size: 'caption2', weight: 'bold' }, color: sevColor(maxSev), maxLines: 1, minScale: 0.5 },
                 ]
             };
         }
         if (family === 'accessoryInline') {
             return {
                 type: 'widget', children: [
-                    { type: 'text', text: 'IP风险: ' + sevText(maxSev) + ' | ' + showIP, font: { size: 'caption1' } },
+                    { type: 'text', text: 'IP风险: ' + sevText(maxSev) + ' | ' + showIP, font: { size: 'caption1' }, color: sevColor(maxSev) },
                 ]
             };
         }
 
-        // systemSmall
+        // systemSmall 小号组件全彩适配
         if (family === 'systemSmall') {
             return {
-                type: 'widget', padding: 12, gap: 6, backgroundColor: BG_COLOR,
+                type: 'widget', padding: 12, gap: 6, backgroundGradient: { type: 'linear', colors: BG_COLORS, startPoint: { x: 0, y: 0 }, endPoint: { x: 1, y: 1 } },
                 children: [
                     {
                         type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-                            { type: 'image', src: 'sf-symbol:shield.lefthalf.filled', color: C_TITLE, width: 14, height: 14 },
-                            { type: 'text', text: 'IP 纯净度', font: { size: 13, weight: 'heavy' }, textColor: C_TITLE },
+                            { type: 'image', src: 'sf-symbol:shield.lefthalf.filled', color: C_WHITE, width: 14, height: 14 },
+                            { type: 'text', text: 'IP 纯净度', font: { size: 13, weight: 'heavy' }, textColor: C_WHITE },
                         ]
                     },
-                    Row(sevIcon(maxSev), sevColor(maxSev), '风险', sevText(maxSev), sevColor(maxSev)),
-                    Row('globe', C_ICON_IP, ipLabel, showIP, C_GREEN),
-                    Row('mappin.and.ellipse', C_ICON_LO, '位置', loc, C_MAIN),
+                    Row(sevIcon(maxSev), sevColor(maxSev), '风险', sevColor(maxSev), sevText(maxSev), sevColor(maxSev)),
+                    Row('globe', COLOR.green, ipLabel, COLOR.green, showIP, C_WHITE),
+                    Row('mappin.and.ellipse', COLOR.purple, '位置', COLOR.purple, loc, C_MAIN),
                 ]
             };
         }
 
-        // ===================== systemMedium — 新布局 =====================
+        // ===================== systemMedium — 中号组件全彩布局 =====================
         if (family === 'systemMedium') {
             var headerRow = {
                 type: 'stack', direction: 'row', alignItems: 'center', gap: 4,
                 children: [
-                    { type: 'image', src: 'sf-symbol:shield.lefthalf.filled', color: C_TITLE, width: 14, height: 14 },
-                    { type: 'text', text: 'IP检测', font: { size: 10, weight: 'heavy' }, textColor: C_TITLE },
-                    { type: 'text', text: showIP, font: { size: 10, weight: 'bold', family: 'Menlo' }, textColor: C_GREEN, maxLines: 1 },
+                    { type: 'image', src: 'sf-symbol:shield.lefthalf.filled', color: C_WHITE, width: 14, height: 14 },
+                    { type: 'text', text: 'IP检测', font: { size: 10, weight: 'heavy' }, textColor: C_WHITE },
+                    { type: 'text', text: showIP, font: { size: 10, weight: 'bold', family: 'Menlo' }, textColor: COLOR.green, maxLines: 1 },
                     { type: 'spacer' },
                 ]
             };
             if (hostingShort) {
-                headerRow.children.push({ type: 'text', text: hosting, font: { size: 10, weight: 'bold' }, textColor: C_SUB });
+                headerRow.children.push({ type: 'text', text: hosting, font: { size: 10, weight: 'bold' }, textColor: COLOR.cyan });
             }
             headerRow.children.push({ type: 'image', src: 'sf-symbol:' + sevIcon(maxSev), color: sevColor(maxSev), width: 12, height: 12 });
             headerRow.children.push({ type: 'text', text: sevText(maxSev), font: { size: 10, weight: 'bold' }, textColor: sevColor(maxSev) });
@@ -566,11 +601,11 @@ export default async function (ctx) {
             }
 
             return {
-                type: 'widget', padding: [10, 12], gap: 5, backgroundColor: BG_COLOR,
+                type: 'widget', padding: [10, 12], gap: 5, backgroundGradient: { type: 'linear', colors: BG_COLORS, startPoint: { x: 0, y: 0 }, endPoint: { x: 1, y: 1 } },
                 children: [
                     headerRow,
-                    Row('number.square.fill', C_ICON_IP, '归属', asnText, C_GREEN),
-                    Row('mappin.and.ellipse', C_ICON_LO, '位置', loc, C_MAIN),
+                    Row('number.square.fill', COLOR.purple, '归属', COLOR.purple, asnText, C_WHITE),
+                    Row('mappin.and.ellipse', COLOR.pink, '位置', COLOR.pink, loc, C_MAIN),
                     {
                         type: 'stack', direction: 'row', gap: 8, flex: 1, children: [
                             { type: 'stack', direction: 'column', gap: 3, flex: 1, children: unlockRows },
@@ -581,12 +616,12 @@ export default async function (ctx) {
             };
         }
 
-        // ===================== systemLarge / systemExtraLarge =====================
+        // ===================== systemLarge / systemExtraLarge 大号组件全彩布局 =====================
         var lgInfoRows = [
-            Row('globe', C_ICON_IP, ipLabel, showIP, C_GREEN),
-            Row('number.square.fill', C_ICON_IP, '归属', asnText, C_GREEN),
-            Row('mappin.and.ellipse', C_ICON_LO, '位置', loc, C_MAIN),
-            Row('building.2.fill', C_ICON_LO, '类型', hosting, C_SUB),
+            Row('globe', COLOR.green, ipLabel, COLOR.green, showIP, C_WHITE),
+            Row('number.square.fill', COLOR.purple, '归属', COLOR.purple, asnText, C_WHITE),
+            Row('mappin.and.ellipse', COLOR.pink, '位置', COLOR.pink, loc, C_MAIN),
+            Row('building.2.fill', COLOR.cyan, '类型', COLOR.cyan, hosting, C_GRAY),
         ];
         var lgScoreRows = [];
         for (var i = 0; i < grades.length; i++) {
@@ -600,36 +635,36 @@ export default async function (ctx) {
             UnlockRow('YouTube', uYouTube),
         ];
         return {
-            type: 'widget', padding: 14, gap: 8, backgroundColor: BG_COLOR,
+            type: 'widget', padding: 14, gap: 8, backgroundGradient: { type: 'linear', colors: BG_COLORS, startPoint: { x: 0, y: 0 }, endPoint: { x: 1, y: 1 } },
             children: [
                 {
                     type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-                        { type: 'image', src: 'sf-symbol:shield.lefthalf.filled', color: C_TITLE, width: 18, height: 18 },
-                        { type: 'text', text: 'IP 多源纯净度', font: { size: 15, weight: 'heavy' }, textColor: C_TITLE },
+                        { type: 'image', src: 'sf-symbol:shield.lefthalf.filled', color: C_WHITE, width: 18, height: 18 },
+                        { type: 'text', text: 'IP 多源纯净度', font: { size: 15, weight: 'heavy' }, textColor: C_WHITE },
                         { type: 'spacer' },
                         { type: 'image', src: 'sf-symbol:' + sevIcon(maxSev), color: sevColor(maxSev), width: 14, height: 14 },
                         { type: 'text', text: sevText(maxSev), font: { size: 13, weight: 'bold' }, textColor: sevColor(maxSev) },
                     ]
                 },
                 { type: 'stack', direction: 'column', gap: 6, children: lgInfoRows },
-                { type: 'stack', direction: 'row', backgroundColor: { light: '#2D3748', dark: '#334155' }, height: 1 },
+                { type: 'stack', direction: 'row', backgroundColor: BG_DIVIDER, height: 1 },
                 {
                     type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-                        { type: 'image', src: 'sf-symbol:chart.bar.fill', color: C_ICON_SC, width: 13, height: 13 },
-                        { type: 'text', text: '多源评分', font: { size: 13, weight: 'bold' }, textColor: C_MAIN },
+                        { type: 'image', src: 'sf-symbol:chart.bar.fill', color: COLOR.yellow, width: 13, height: 13 },
+                        { type: 'text', text: '多源评分', font: { size: 13, weight: 'bold' }, textColor: COLOR.yellow },
                     ]
                 },
                 { type: 'stack', direction: 'column', gap: 4, children: lgScoreRows },
-                { type: 'stack', direction: 'row', backgroundColor: { light: '#2D3748', dark: '#334155' }, height: 1 },
+                { type: 'stack', direction: 'row', backgroundColor: BG_DIVIDER, height: 1 },
                 {
                     type: 'stack', direction: 'row', alignItems: 'center', gap: 6, children: [
-                        { type: 'image', src: 'sf-symbol:play.tv.fill', color: C_BLUE, width: 13, height: 13 },
-                        { type: 'text', text: '解锁检测', font: { size: 13, weight: 'bold' }, textColor: C_MAIN },
+                        { type: 'image', src: 'sf-symbol:play.tv.fill', color: COLOR.pink, width: 13, height: 13 },
+                        { type: 'text', text: '解锁检测', font: { size: 13, weight: 'bold' }, textColor: COLOR.pink },
                     ]
                 },
                 { type: 'stack', direction: 'column', gap: 4, children: lgUnlockRows },
                 { type: 'spacer' },
-                { type: 'date', date: new Date().toISOString(), format: 'relative', font: { size: 'caption2' }, textColor: C_SUB },
+                { type: 'date', date: new Date().toISOString(), format: 'relative', font: { size: 'caption2' }, textColor: C_GRAY },
             ]
         };
     } catch (e) {

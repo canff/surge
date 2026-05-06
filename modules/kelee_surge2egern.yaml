@@ -7,7 +7,7 @@ description: |
   
   功能：点击安装时直接唤起 Egern，无需脚本转换。
 homepage: https://hub.kelee.one
-icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/emby/xinghai(1)-emby.png
+icon: https://gitlab.com/lodepuly/iconlibrary/-/raw/main/Other_icon/120px/KeLee.png
 body_rewrites:
   # 可莉插件中心跳转
   - response_regex:

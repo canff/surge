@@ -1,6 +1,7 @@
 name: Telegram 跳转
 description: 将 https://t.me/... 重定向到你选择的 Telegram 客户端
 author: panda𝕏
+icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/Telegrampremium(1).png
 env_schema:
   CLIENT:
     name: Telegram 客户端

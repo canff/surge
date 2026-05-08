@@ -1,0 +1,23 @@
+name: Spotify(>=iOS15)
+description: 2026.04.15 测试 部分解锁premium,音质不能设置为超高(建议登录后再打开脚本,重启app等待脚本生效)
+open_url: https://github.com/app2smile/rules
+icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/04ProxySoft/spotify(green)(1).png
+dns: {}
+header_rewrites:
+- delete:
+    match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$
+    name: if-none-match
+    type: request
+scriptings:
+- http_response:
+    name: spotifyProto
+    match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$
+    script_url: https://raw.githubusercontent.com/Amlabort/MY_clash/refs/heads/main/files/lpx/js/spot-proto-eevee.js
+    timeout: 10
+    body_required: true
+    binary_body: true
+mitm:
+  hostnames:
+    includes:
+    - spclient.wg.spotify.com
+    - '*spclient.spotify.com'

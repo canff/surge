@@ -1,0 +1,24 @@
+name: Skip Proxy And Real-IP Lists
+description: 跳过部分应用的代理检测
+icon: https://raw.githubusercontent.com/lige47/QuanX-icon-rule/main/icon/03CNSoft/yunshanfu.png
+dns: {}
+bypass_tunnel_proxy:
+- www.baidu.com
+- yunbusiness.ccb.com
+- wxh.wo.cn
+- gate.lagou.com
+- www.abchina.com.cn
+- www.shanbay.com
+- login-service.mobile-bank.psbc.com
+- mobile-bank.psbc.com
+- id6.me
+- www.163.com
+real_ip_domains:
+- easy-login.10099.com.cn
+- '*-update.xoyocdn.com'
+- id6.me
+- open.e.189.cn
+rules:
+- domain:
+    match: msmp.abchina.com.cn
+    policy: REJECT

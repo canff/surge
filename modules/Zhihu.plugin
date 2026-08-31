@@ -1,0 +1,102 @@
+#!name=知乎
+#!desc=上逼乎, 与世界分享你的装逼故事。
+#!author=RuCu6[https://github.com/RuCu6], blackmatrix7[https://github.com/blackmatrix7]
+#!icon=https://rucu6.pages.dev/Icons/app/zhihu.png
+#!date=2026-08-30 10:10
+#!egern_version=1.0.0
+
+[Rule]
+DOMAIN, appcloud.zhihu.com, REJECT
+DOMAIN, appcloud2.in.zhihu.com, REJECT
+DOMAIN, crash2.zhihu.com, REJECT
+DOMAIN, lens.zhihu.com, REJECT
+DOMAIN, mqtt.zhihu.com, REJECT
+DOMAIN, sugar.zhihu.com, REJECT
+DOMAIN, zxid-m.mobileservice.cn, REJECT
+IP-CIDR, 103.41.167.237/32, REJECT, no-resolve
+IP-CIDR, 118.89.204.198/32, REJECT, no-resolve
+IP-CIDR, 182.61.194.7/32, REJECT, no-resolve
+IP-CIDR6, 2402:4e00:1200:ed00:0:9089:6dac:96b6/128, REJECT, no-resolve
+
+[Rewrite]
+# 首页独立广告接口
+^https:\/\/api\.zhihu\.com\/commercial_api\/.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/content-distribution-core\/bubble\/common\/settings.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/(moments\/lastread|drama\/hot-drama-list).* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/root\/window.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/(bazaar\/float_window|market\/popovers_v2).* reject 200 application/json {},i
+
+# 我的页面
+^https:\/\/api\.zhihu\.com\/me\/guides.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/people\/homepage_entry_v2.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/unlimited\/go\/my_card.* reject 404,i
+^https:\/\/www\.zhihu\.com\/appview\/v3\/zhmore.* reject 404,i
+
+# 搜索独立接口
+^https:\/\/api\.zhihu\.com\/search\/(hot_search|preset_words).* reject 200 application/json {},i
+^https:\/\/www\.zhihu\.com\/api\/v4\/search\/clicked_recommendation\?.* reject 200 application/json {},i
+^https:\/\/www\.zhihu\.com\/api\/v4\/search\/related_queries\/(article|answer)\/\d+.* reject 200 application/json {},i
+
+# 回答详情独立广告接口
+^https:\/\/api\.zhihu\.com\/comment_v5\/(articles|answers)\/\d+\/list-headers.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/prague\/related_suggestion_native\/feed\?.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/related_recommend\/feed\/waterfall\?.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/v5\.1\/topics\/answer\/\d+\/relation.* reject 200 application/json {},i
+
+# 其他
+^https:\/\/api\.zhihu\.com\/ab\/api\/v1\/products\/zhihu\/platforms\/ios\/config.* reject 200 application/json {},i
+^https:\/\/api\.zhihu\.com\/ad-style-service\/request.* reject 200 application/json {},i
+^https:\/\/appcloud2\.zhihu\.com\/v3\/resource\?group_name=mp.* reject 200 application/json {},i
+^https:\/\/link\.zhihu\.com\/\?target=(?:https?)?(?:%3A|:)?(?:\/\/|%2F%2F)?(.*) 302 http://$1,i
+
+# 网页版去广告
+^https:\/\/api\.zhihu\.com\/distribute\/rhea\/qa_ad_card\/h5\/recommendation\?.* reject 200 application/json {},i
+^https:\/\/www\.zhihu\.com\/api\/v4\/hot_recommendation.* reject 200 application/json {},i
+^https:\/\/www\.zhihu\.com\/api\/v4\/mcn\/v2\/linkcards\?.* reject 200 application/json {},i
+^https:\/\/www\.zhihu\.com\/api\/v4\/(answers|questions)\/\d+\/related-readings.* reject 200 application/json {},i
+^https:\/\/www\.zhihu\.com\/commercial_api\/banners_v3\/mobile_banner.* reject 200 application/json {},i
+^https:\/\/zhuanlan\.zhihu\.com\/api\/articles\/\d+\/recommendation.* reject 200 application/json {},i
+
+[Script]
+# 回答/文章详情页
+http-response ^https:\/\/(?:api|page-info)\.zhihu\.com\/(?:answers|articles)\/v2\/\d+ script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=回答文章详情页清理,i
+
+# 首页悬浮/广告接口
+http-response ^https:\/\/api\.zhihu\.com\/commercial_api\/app_float_layer script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=首页悬浮图标清理,i
+
+# 信息流推荐
+http-response ^https:\/\/api\.zhihu\.com\/feed\/render\/tab\/config script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=推荐信息流配置清理,i
+http-response ^https:\/\/api\.zhihu\.com\/(?:moments_v3|topstory\/hot-lists\/total|topstory\/recommend) script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=推荐信息流清理,i
+
+# 顶部标签
+http-response ^https:\/\/api\.zhihu\.com\/root\/tab script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=顶部标签清理,i
+
+# 热榜
+http-response ^https:\/\/api\.zhihu\.com\/v2\/topstory\/hot-lists\/everyone-seeing script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=热榜信息流清理,i
+
+# 下一个回答 / 评论区顶部
+http-response ^https:\/\/api\.zhihu\.com\/next-(?:bff|data|render) script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=下一个回答评论区清理,i
+
+# 回答详情页推荐
+http-response ^https:\/\/www\.zhihu\.com\/api\/v4\/(?:articles|answers)\/\d+\/recommendations? script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=回答详情推荐清理,i
+
+# 服务器推送配置
+http-response ^https:\/\/appcloud2\.zhihu\.com\/v3\/config script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=服务器配置清理,i
+http-response ^https:\/\/m-cloud\.zhihu\.com\/api\/cloud\/zhihu\/config\/all script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=服务器配置全量清理,i
+
+# 会员页
+http-response ^https:\/\/api\.zhihu\.com\/bazaar\/vip_tab\/header script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=会员页清理,i
+
+# 搜索页
+http-response ^https:\/\/api\.zhihu\.com\/search\/recommend_query\/v2 script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=搜索页清理,i
+
+# 评论区
+http-response ^https:\/\/api\.zhihu\.com\/comment_v5\/(pins\/)?\d+\/root_comment script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=评论区清理,i
+
+# 信息流广告过滤
+http-response ^https:\/\/api\.zhihu\.com\/questions\/\d+ script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=问题信息流广告过滤,i
+http-response ^https:\/\/api\.zhihu\.com\/feed\/render script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=Feed广告过滤,i
+http-response ^https:\/\/api\.zhihu\.com\/topstory\/recommend\/feed script-path=https://cdn.jsdelivr.net/gh/canff/surge@main/js/zhihu.js, requires-body=true, tag=推荐Feed广告过滤,i
+
+[MITM]
+hostname = *.zhihu.com
